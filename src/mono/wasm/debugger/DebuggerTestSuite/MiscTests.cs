@@ -84,8 +84,8 @@ namespace DebuggerTests
                 "window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:PrimitiveTypesTest'); }, 1);",
                 test_fn: async (locals) =>
                 {
-                    await CheckSymbol(locals, "c0", "8364 '€'");
-                    await CheckSymbol(locals, "c1", "65 'A'");
+                    await CheckSymbol(locals, "c0", '€');
+                    await CheckSymbol(locals, "c1", 'A');
                     await Task.CompletedTask;
                 }
             );
@@ -563,7 +563,7 @@ namespace DebuggerTests
                     Days = TNumber(3530),
                     Minutes = TNumber(2),
                     Seconds = TNumber(4),
-                }, "ts_props", num_fields: 12);
+                }, "ts_props", skip_num_fields_check: true);
 
             // DateTimeOffset
             await CompareObjectPropertiesFor(frame_locals, "dto",
@@ -572,7 +572,7 @@ namespace DebuggerTests
                     Day = TNumber(2),
                     Year = TNumber(2020),
                     DayOfWeek = TEnum("System.DayOfWeek", "Thursday")
-                }, "dto_props", num_fields: 20);
+                }, "dto_props", skip_num_fields_check: true);
 
             var DT = new DateTime(2004, 10, 15, 1, 2, 3);
             var DTO = new DateTimeOffset(dt0, new TimeSpan(2, 14, 0));

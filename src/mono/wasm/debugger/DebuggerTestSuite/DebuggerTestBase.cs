@@ -323,10 +323,10 @@ namespace DebuggerTests
             await CheckValue(l["value"], TString(value), name);
         }
 
-        internal async Task<JToken> CheckSymbol(JToken locals, string name, string value)
+        internal async Task<JToken> CheckSymbol(JToken locals, string name, char value)
         {
             var l = GetAndAssertObjectWithName(locals, name);
-            await CheckValue(l["value"], TSymbol(value), name);
+            await CheckValue(l["value"], TChar(value), name);
             return l;
         }
 
@@ -709,7 +709,7 @@ namespace DebuggerTests
             }
         }
 
-        internal async Task CheckProps(JToken actual, object exp_o, string label, int num_fields = -1)
+        internal async Task CheckProps(JToken actual, object exp_o, string label, int num_fields = -1, bool skip_num_fields_check = false)
         {
             if (exp_o.GetType().IsArray || exp_o is JArray)
             {
@@ -738,8 +738,11 @@ namespace DebuggerTests
             if (exp == null)
                 exp = JObject.FromObject(exp_o);
 
-            num_fields = num_fields < 0 ? exp.Values<JToken>().Count() : num_fields;
-            Assert.True(num_fields == actual.Count(), $"[{label}] Number of fields don't match, Expected: {num_fields}, Actual: {actual.Count()}");
+            if (!skip_num_fields_check)
+            {
+                num_fields = num_fields < 0 ? exp.Values<JToken>().Count() : num_fields;
+                Assert.True(num_fields == actual.Count(), $"[{label}] Number of fields don't match, Expected: {num_fields}, Actual: {actual.Count()}");
+            }
 
             foreach (var kvp in exp)
             {
@@ -832,7 +835,7 @@ namespace DebuggerTests
         }
 
         // Find an object with @name, *fetch* the object, and check against @o
-        internal async Task<JToken> CompareObjectPropertiesFor(JToken locals, string name, object o, string label = null, int num_fields = -1)
+        internal async Task<JToken> CompareObjectPropertiesFor(JToken locals, string name, object o, string label = null, int num_fields = -1, bool skip_num_fields_check = false)
         {
             if (label == null)
                 label = name;
@@ -840,7 +843,7 @@ namespace DebuggerTests
             try
             {
                 if (o != null)
-                    await CheckProps(props, o, label, num_fields);
+                    await CheckProps(props, o, label, num_fields, skip_num_fields_check);
                 return props;
             }
             catch
@@ -1171,6 +1174,8 @@ namespace DebuggerTests
         internal static JObject TBool(bool value) => JObject.FromObject(new { type = "boolean", value = @value, description = @value ? "true" : "false" });
 
         internal static JObject TSymbol(string value) => JObject.FromObject(new { type = "symbol", value = @value, description = @value });
+        
+        internal static JObject TChar(char value) => JObject.FromObject(new { type = "symbol", value = @value, description = $"{(int)value} '{@value}'" });
 
         /*
         	For target names with generated method names like
