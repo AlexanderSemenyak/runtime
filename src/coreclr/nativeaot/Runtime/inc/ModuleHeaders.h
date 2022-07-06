@@ -46,11 +46,11 @@ enum class ReadyToRunSectionType
     TypeManagerIndirection      = 204,
     EagerCctor                  = 205,
     FrozenObjectRegion          = 206,
-    GCStaticDesc                = 207,
+    // 207 is unused - it was used by GCStaticDesc
     ThreadStaticOffsetRegion    = 208,
-    ThreadStaticGCDescRegion    = 209,
-    ThreadStaticIndex           = 210,
-    LoopHijackFlag              = 211,
+    // 209 is unused - it was used by ThreadStaticGCDescRegion
+    // 210 is unused - it was used by ThreadStaticIndex
+    // 211 is unused - it was used by LoopHijackFlag
     ImportAddressTables         = 212,
 
     // Sections 300 - 399 are reserved for RhFindBlob backwards compatibility

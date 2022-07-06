@@ -15,11 +15,12 @@ namespace System.Security.Cryptography
             DeriveKeyFromHash(otherPartyPublicKey, HashAlgorithmName.SHA256, null, null);
 
         public override byte[] DeriveKeyFromHash(
-            ECDiffieHellmanPublicKey otherPartyPublicKey!!,
+            ECDiffieHellmanPublicKey otherPartyPublicKey,
             HashAlgorithmName hashAlgorithm,
             byte[]? secretPrepend,
             byte[]? secretAppend)
         {
+            ArgumentNullException.ThrowIfNull(otherPartyPublicKey);
             ArgumentException.ThrowIfNullOrEmpty(hashAlgorithm.Name, nameof(hashAlgorithm));
 
             ThrowIfDisposed();
@@ -29,16 +30,17 @@ namespace System.Security.Cryptography
                 hashAlgorithm,
                 secretPrepend,
                 secretAppend,
-                (pubKey, hasher) => DeriveSecretAgreement(pubKey, hasher));
+                DeriveSecretAgreement);
         }
 
         public override byte[] DeriveKeyFromHmac(
-            ECDiffieHellmanPublicKey otherPartyPublicKey!!,
+            ECDiffieHellmanPublicKey otherPartyPublicKey,
             HashAlgorithmName hashAlgorithm,
             byte[]? hmacKey,
             byte[]? secretPrepend,
             byte[]? secretAppend)
         {
+            ArgumentNullException.ThrowIfNull(otherPartyPublicKey);
             ArgumentException.ThrowIfNullOrEmpty(hashAlgorithm.Name, nameof(hashAlgorithm));
 
             ThrowIfDisposed();
@@ -49,18 +51,22 @@ namespace System.Security.Cryptography
                 hmacKey,
                 secretPrepend,
                 secretAppend,
-                (pubKey, hasher) => DeriveSecretAgreement(pubKey, hasher));
+                DeriveSecretAgreement);
         }
 
-        public override byte[] DeriveKeyTls(ECDiffieHellmanPublicKey otherPartyPublicKey!!, byte[] prfLabel!!, byte[] prfSeed!!)
+        public override byte[] DeriveKeyTls(ECDiffieHellmanPublicKey otherPartyPublicKey, byte[] prfLabel, byte[] prfSeed)
         {
+            ArgumentNullException.ThrowIfNull(otherPartyPublicKey);
+            ArgumentNullException.ThrowIfNull(prfLabel);
+            ArgumentNullException.ThrowIfNull(prfSeed);
+
             ThrowIfDisposed();
 
             return ECDiffieHellmanDerivation.DeriveKeyTls(
                 otherPartyPublicKey,
                 prfLabel,
                 prfSeed,
-                (pubKey, hasher) => DeriveSecretAgreement(pubKey, hasher));
+                DeriveSecretAgreement);
         }
 
         /// <summary>

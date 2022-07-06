@@ -1,16 +1,20 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DebuggerTests
 {
-    public class AssignmentTests : DebuggerTestBase
+    public class AssignmentTests : DebuggerTests
     {
+        public AssignmentTests(ITestOutputHelper testOutput)
+                : base(testOutput)
+        {}
+
         public static TheoryData<string, JObject, JObject> GetTestData => new TheoryData<string, JObject, JObject>
         {
             { "MONO_TYPE_OBJECT",      TObject("object", is_null: true),                        TObject("object") },
@@ -40,7 +44,7 @@ namespace DebuggerTests
             { "MONO_TYPE_R8",          TNumber(0),                                              TNumber("3.1415") },
         };
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [MemberData("GetTestData")]
         async Task InspectVariableBeforeAndAfterAssignment(string clazz, JObject checkDefault, JObject checkValue)
         {

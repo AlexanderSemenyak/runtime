@@ -32,10 +32,11 @@ namespace System.Security.Cryptography
         }
 
         [SupportedOSPlatform("windows")]
-        public static CngKey Create(CngAlgorithm algorithm!!, string? keyName, CngKeyCreationParameters? creationParameters)
+        public static CngKey Create(CngAlgorithm algorithm, string? keyName, CngKeyCreationParameters? creationParameters)
         {
-            if (creationParameters == null)
-                creationParameters = new CngKeyCreationParameters();
+            ArgumentNullException.ThrowIfNull(algorithm);
+
+            creationParameters ??= new CngKeyCreationParameters();
 
             SafeNCryptProviderHandle providerHandle = creationParameters.Provider!.OpenStorageProvider();
             SafeNCryptKeyHandle keyHandle;

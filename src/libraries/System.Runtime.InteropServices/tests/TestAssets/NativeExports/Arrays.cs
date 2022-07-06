@@ -63,6 +63,53 @@ namespace NativeExports
             *res = CreateRangeImpl(start, end, numValues);
         }
 
+        [UnmanagedCallersOnly(EntryPoint = "sum_int_ptr_array")]
+        public static int SumPointers(int** values, int numValues)
+        {
+            if (values == null)
+                return -1;
+
+            int sum = 0;
+            for (int i = 0; i < numValues; i++)
+            {
+                sum += *values[i];
+            }
+            return sum;
+        }
+
+        [UnmanagedCallersOnly(EntryPoint = "sum_int_ptr_array_ref")]
+        public static int SumInPointers(int*** values, int numValues)
+        {
+            if (*values == null)
+                return -1;
+
+            int sum = 0;
+            for (int i = 0; i < numValues; i++)
+            {
+                sum += *(*values)[i];
+            }
+            return sum;
+        }
+
+        [UnmanagedCallersOnly(EntryPoint = "duplicate_int_ptr_array")]
+        public static void DuplicatePointers(int*** values, int numValues)
+        {
+            int sizeInBytes = sizeof(int*) * numValues;
+            int** newArray = (int**)Marshal.AllocCoTaskMem(sizeInBytes);
+            new Span<byte>(*values, sizeInBytes).CopyTo(new Span<byte>(newArray, sizeInBytes));
+            Marshal.FreeCoTaskMem((IntPtr)(*values));
+            *values = newArray;
+        }
+
+        [UnmanagedCallersOnly(EntryPoint = "return_duplicate_int_ptr_array")]
+        public static int** ReturnDuplicatePointers(int** values, int numValues)
+        {
+            int sizeInBytes = sizeof(int*) * numValues;
+            int** newArray = (int**)Marshal.AllocCoTaskMem(sizeInBytes);
+            new Span<byte>(values, sizeInBytes).CopyTo(new Span<byte>(newArray, sizeInBytes));
+            return newArray;
+        }
+
         [UnmanagedCallersOnly(EntryPoint = "fill_range_array")]
         [DNNE.C99DeclCode("struct int_struct_wrapper;")]
         public static byte FillRange([DNNE.C99Type("struct int_struct_wrapper*")] IntStructWrapperNative* numValues, int length, int start)
@@ -189,12 +236,12 @@ namespace NativeExports
 
         [UnmanagedCallersOnly(EntryPoint = "and_all_members")]
         [DNNE.C99DeclCode("struct bool_struct;")]
-        public static byte AndAllMembers([DNNE.C99Type("struct bool_struct*")] BoolStructNative* pArray, int length)
+        public static byte AndAllMembers([DNNE.C99Type("struct bool_struct*")] BoolStructNative_V1* pArray, int length)
         {
             bool result = true;
             for (int i = 0; i < length; i++)
             {
-                BoolStruct managed = pArray[i].ToManaged();
+                BoolStruct_V1 managed = pArray[i].ToManaged();
                 result &= managed.b1 && managed.b2 && managed.b3;
             }
             return (byte)(result ? 1 : 0);

@@ -84,8 +84,10 @@ namespace System.DirectoryServices.ActiveDirectory
         #endregion IDisposable
 
         #region public methods
-        public static ActiveDirectorySchema GetSchema(DirectoryContext context!!)
+        public static ActiveDirectorySchema GetSchema(DirectoryContext context)
         {
+            ArgumentNullException.ThrowIfNull(context);
+
             // contexttype should be Forest, DirectoryServer or ConfigurationSet
             if ((context.ContextType != DirectoryContextType.Forest) &&
                 (context.ContextType != DirectoryContextType.ConfigurationSet) &&
@@ -187,10 +189,7 @@ namespace System.DirectoryServices.ActiveDirectory
 
                 // refresh the schema on the client
                 // bind to the abstract schema
-                if (_abstractSchemaEntry == null)
-                {
-                    _abstractSchemaEntry = directoryEntryMgr.GetCachedDirectoryEntry("Schema");
-                }
+                _abstractSchemaEntry ??= directoryEntryMgr.GetCachedDirectoryEntry("Schema");
                 _abstractSchemaEntry.RefreshCache();
             }
             catch (COMException e)
@@ -402,11 +401,7 @@ namespace System.DirectoryServices.ActiveDirectory
             get
             {
                 CheckIfDisposed();
-                if (_cachedSchemaRoleOwner == null)
-                {
-                    _cachedSchemaRoleOwner = GetSchemaRoleOwner();
-                }
-                return _cachedSchemaRoleOwner;
+                return _cachedSchemaRoleOwner ??= GetSchemaRoleOwner();
             }
         }
 

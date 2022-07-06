@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 using Microsoft.WebAssembly.Diagnostics;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DebuggerTests
 {
 
-    public class DelegateTests : DebuggerTestBase
+    public class DelegateTests : DebuggerTests
     {
+        public DelegateTests(ITestOutputHelper testOutput) : base(testOutput)
+        {}
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [InlineData(0, 53, 8, "DelegatesTest", false)]
         [InlineData(0, 53, 8, "DelegatesTest", true)]
         [InlineData(2, 99, 8, "InnerMethod2", false)]
@@ -80,7 +83,7 @@ namespace DebuggerTests
                }
             );
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [InlineData(0, 202, 8, "DelegatesSignatureTest", false)]
         [InlineData(0, 202, 8, "DelegatesSignatureTest", true)]
         [InlineData(2, 99, 8, "InnerMethod2", false)]
@@ -151,7 +154,7 @@ namespace DebuggerTests
                }, "locals#fn_void_del_arr");
            });
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [InlineData(0, 224, 8, "ActionTSignatureTest", false)]
         [InlineData(0, 224, 8, "ActionTSignatureTest", true)]
         [InlineData(2, 99, 8, "InnerMethod2", false)]
@@ -193,7 +196,7 @@ namespace DebuggerTests
                }, "locals#fn_action_arr");
            });
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [InlineData(0, 242, 8, "NestedDelegatesTest", false)]
         [InlineData(0, 242, 8, "NestedDelegatesTest", true)]
         [InlineData(2, 99, 8, "InnerMethod2", false)]
@@ -236,7 +239,7 @@ namespace DebuggerTests
                }, "locals#fn_del_arr");
            });
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [InlineData(0, 262, 8, "MethodWithDelegateArgs", false)]
         [InlineData(0, 262, 8, "MethodWithDelegateArgs", true)]
         [InlineData(2, 99, 8, "InnerMethod2", false)]
@@ -269,7 +272,7 @@ namespace DebuggerTests
                }, "locals#dst_arr");
            });
 
-        [Theory]
+        [ConditionalTheory(nameof(RunningOnChrome))]
         [InlineData(false)]
         [InlineData(true)]
         public async Task MethodWithDelegatesAsyncTest(bool use_cfo) => await CheckInspectLocalsAtBreakpointSite(

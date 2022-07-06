@@ -8,13 +8,16 @@ using Microsoft.WebAssembly.Diagnostics;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using Xunit;
-using System.Threading;
+using Xunit.Abstractions;
 
 namespace DebuggerTests;
 
-public class SetNextIpTests : DebuggerTestBase
+public class SetNextIpTests : DebuggerTests
 {
-    [Fact]
+    public SetNextIpTests(ITestOutputHelper testOutput) : base(testOutput)
+    {}
+
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task SetAndCheck()
     {
         async Task CheckLocalsAsync(JToken locals, int c, int d, int e, bool f)
@@ -53,7 +56,7 @@ public class SetNextIpTests : DebuggerTestBase
             "IntAdd");
     }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task OutsideTheCurrentMethod()
     {
         var bp = await SetBreakpoint("dotnet://debugger-test.dll/debugger-test.cs", 9, 8);
@@ -75,7 +78,7 @@ public class SetNextIpTests : DebuggerTestBase
             });
     }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task AsyncMethod()
     {
         var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
@@ -109,7 +112,7 @@ public class SetNextIpTests : DebuggerTestBase
             });
     }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task Lambda()
     {
         var debugger_test_loc = "dotnet://debugger-test.dll/debugger-async-test.cs";
@@ -155,7 +158,7 @@ public class SetNextIpTests : DebuggerTestBase
             });
         }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task Lambda_InvalidLocation()
     {
         var debugger_test_loc = "dotnet://debugger-test.dll/debugger-async-test.cs";
@@ -184,7 +187,7 @@ public class SetNextIpTests : DebuggerTestBase
         times: 2);
     }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task Lambda_ToNestedLambda()
     {
         var debugger_test_loc = "dotnet://debugger-test.dll/debugger-async-test.cs";
@@ -214,7 +217,7 @@ public class SetNextIpTests : DebuggerTestBase
         times: 2);
         }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task Lambda_ToNestedSingleLineLambda_Invalid()
     {
         var debugger_test_loc = "dotnet://debugger-test.dll/debugger-async-test.cs";
@@ -244,7 +247,7 @@ public class SetNextIpTests : DebuggerTestBase
         times: 2);
     }
 
-    [Fact]
+    [ConditionalFact(nameof(RunningOnChrome))]
     public async Task Lambda_ToNestedSingleLineLambda_Valid()
     {
         var debugger_test_loc = "dotnet://debugger-test.dll/debugger-async-test.cs";

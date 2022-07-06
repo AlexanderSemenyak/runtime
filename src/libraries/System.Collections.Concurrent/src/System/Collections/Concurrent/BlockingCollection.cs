@@ -173,8 +173,10 @@ namespace System.Collections.Concurrent
         /// <exception cref="System.ArgumentOutOfRangeException">The <paramref name="boundedCapacity"/> is not a positive value.</exception>
         /// <exception cref="System.ArgumentException">The supplied <paramref name="collection"/> contains more values
         /// than is permitted by <paramref name="boundedCapacity"/>.</exception>
-        public BlockingCollection(IProducerConsumerCollection<T> collection!!, int boundedCapacity)
+        public BlockingCollection(IProducerConsumerCollection<T> collection, int boundedCapacity)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+
             if (boundedCapacity < 1)
             {
                 throw new ArgumentOutOfRangeException(
@@ -196,8 +198,10 @@ namespace System.Collections.Concurrent
         /// <param name="collection">The collection to use as the underlying data store.</param>
         /// <exception cref="System.ArgumentNullException">The <paramref name="collection"/> argument is
         /// null.</exception>
-        public BlockingCollection(IProducerConsumerCollection<T> collection!!)
+        public BlockingCollection(IProducerConsumerCollection<T> collection)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+
             Initialize(collection, NON_BOUNDED, collection.Count);
         }
 
@@ -686,9 +690,7 @@ namespace System.Collections.Concurrent
                 if (waitForSemaphoreWasSuccessful == false && millisecondsTimeout != 0)
                 {
                     // create the linked token if it is not created yet
-                    if (linkedTokenSource == null)
-                        linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken,
-                                                                                          _consumersCancellationTokenSource.Token);
+                    linkedTokenSource ??= CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _consumersCancellationTokenSource.Token);
                     waitForSemaphoreWasSuccessful = _occupiedNodes.Wait(millisecondsTimeout, linkedTokenSource.Token);
                 }
             }
@@ -1690,8 +1692,10 @@ namespace System.Collections.Concurrent
         /// <exception cref="System.ArgumentException">If the collections argument is a 0-length array or contains a
         /// null element. Also, if at least one of the collections has been marked complete for adds.</exception>
         /// <exception cref="System.ObjectDisposedException">If at least one of the collections has been disposed.</exception>
-        private static void ValidateCollectionsArray(BlockingCollection<T>[] collections!!, bool isAddOperation)
+        private static void ValidateCollectionsArray(BlockingCollection<T>[] collections, bool isAddOperation)
         {
+            ArgumentNullException.ThrowIfNull(collections);
+
             if (collections.Length < 1)
             {
                 throw new ArgumentException(
@@ -1775,8 +1779,10 @@ namespace System.Collections.Concurrent
 
         /// <summary>Constructs a new debugger view object for the provided blocking collection object.</summary>
         /// <param name="collection">A blocking collection to browse in the debugger.</param>
-        public BlockingCollectionDebugView(BlockingCollection<T> collection!!)
+        public BlockingCollectionDebugView(BlockingCollection<T> collection)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+
             _blockingCollection = collection;
         }
 

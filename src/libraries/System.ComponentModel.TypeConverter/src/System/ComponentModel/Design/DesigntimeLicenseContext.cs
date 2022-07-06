@@ -30,8 +30,10 @@ namespace System.ComponentModel.Design
         /// <summary>
         /// Sets a saved license key.
         /// </summary>
-        public override void SetSavedLicenseKey(Type type!!, string key)
+        public override void SetSavedLicenseKey(Type type, string key)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             _savedLicenseKeys[type.AssemblyQualifiedName!] = key;
         }
     }
@@ -59,15 +61,8 @@ namespace System.ComponentModel.Design
         {
             if (_savedLicenseKeys == null || _savedLicenseKeys[type.AssemblyQualifiedName!] == null)
             {
-                if (_savedLicenseKeys == null)
-                {
-                    _savedLicenseKeys = new Hashtable();
-                }
-
-                if (resourceAssembly == null)
-                {
-                    resourceAssembly = Assembly.GetEntryAssembly();
-                }
+                _savedLicenseKeys ??= new Hashtable();
+                resourceAssembly ??= Assembly.GetEntryAssembly();
 
                 if (resourceAssembly == null)
                 {
